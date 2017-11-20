@@ -18,7 +18,7 @@ class Connect4BoardTest {
 
     @Test
     fun initialiateBoard() {
-        val board = initiateBoard(5, 10)
+        val board = initializeBoard(5, 10)
 
         assertEquals(5, board.columns.size)
 
@@ -29,7 +29,7 @@ class Connect4BoardTest {
 
     @Test
     fun withMove() {
-        val board = initiateBoard(5, 5)
+        val board = initializeBoard(5, 5)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
                 .withMove(1, testPlayer1)
@@ -41,14 +41,14 @@ class Connect4BoardTest {
 
     @Test(expected = IllegalMoveException::class)
     fun withMove_NoSuchColumn() {
-        val board = initiateBoard(5, 5)
+        val board = initializeBoard(5, 5)
 
         board.withMove(5, testPlayer1)
     }
 
     @Test(expected = IllegalMoveException::class)
     fun withMove_FullColumn() {
-        initiateBoard(5, 5)
+        initializeBoard(5, 5)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
@@ -59,7 +59,7 @@ class Connect4BoardTest {
 
     @Test()
     fun getGameState_SimpleColumn() {
-        val board = initiateBoard(10, 10)
+        val board = initializeBoard(10, 10)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
@@ -73,7 +73,7 @@ class Connect4BoardTest {
     // Working theory: JVM warmup.  A copy of this testcase runs in the usual 1-2ms.
     @Test()
     fun getGameState_SimpleRow() {
-        val board = initiateBoard(10, 10)
+        val board = initializeBoard(10, 10)
                 .withMove(0, testPlayer1)
                 .withMove(1, testPlayer1)
                 .withMove(2, testPlayer1)
@@ -85,7 +85,7 @@ class Connect4BoardTest {
 
     @Test()
     fun getGameState_SimpleUpwardDiagonal() {
-        val board = initiateBoard(10, 10)
+        val board = initializeBoard(10, 10)
                 .withMove(0, testPlayer1)
                 .withMove(1, testPlayer2)
                 .withMove(1, testPlayer1)

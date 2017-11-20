@@ -124,7 +124,7 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
 /**
  * Creates an empty game board with the specified dimensions.
  */
-fun initiateBoard(width: Int, height: Int): Connect4Board {
+fun initializeBoard(width: Int, height: Int): Connect4Board {
     val backingLists = (0 until width).asSequence()
             .map { (0 until height).asSequence().map { null as Piece? }.toImmutableList() }
             .toImmutableList()

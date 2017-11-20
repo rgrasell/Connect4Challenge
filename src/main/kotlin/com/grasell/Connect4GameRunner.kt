@@ -6,7 +6,7 @@ package com.grasell
  * Returns the player who won, or null for a draw.
  */
 fun simulateGame(player1: Player, player2: Player, width: Int = 7, height: Int = 6, winningSequenceLength: Int = 4): Player? {
-    var board = initiateBoard(width, height)
+    var board = initializeBoard(width, height)
     var player1Turn = true
 
     // Give each player a turn until the game ends by a win or draw
