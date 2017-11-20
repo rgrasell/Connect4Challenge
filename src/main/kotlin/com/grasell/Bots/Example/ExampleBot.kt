@@ -6,7 +6,8 @@ import com.grasell.Player
 class ExampleBot : Player {
     override fun takeTurn(board: Connect4Board, turnCallback: (Int) -> Unit) {
         // Feel free to use the withMoves method on the board to simulate the outcome of moves
-        val newBoard = board.withMove(3, this) // Simulates the outcome of us placing a piece at column index 3
+        // Note that this has no effect on the game at large. Until turnCallback() is called, the official game board is unaltered.
+        val newBoard = board.withMove(3, this) // Simulates the outcome of placing a piece at column index 3
 
         // Do whatever calculations you want, then call turnCallback() with your move
         turnCallback(3) // Just pass in what column you want to drop a piece into.
@@ -15,6 +16,7 @@ class ExampleBot : Player {
         turnCallback(4)
 
         // In our example, the outcome is only that we place a piece at column 4.
+        // It is impossible to take more than 1 move, no matter how many times we call the callback.
     }
 
     override val name = "Example player"
