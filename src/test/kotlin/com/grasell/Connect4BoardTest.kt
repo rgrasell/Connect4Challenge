@@ -17,7 +17,7 @@ class Connect4BoardTest {
     }
 
     @Test
-    fun initialiateBoard() {
+    fun initializeBoard() {
         val board = initializeBoard(5, 10)
 
         assertEquals(5, board.columns.size)
@@ -64,6 +64,18 @@ class Connect4BoardTest {
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
+
+        val state = board.getGameState(4) as Connect4Board.Won
+        assertTrue(state.winner == testPlayer1)
+    }
+
+    @Test()
+    fun getGameState_BigColumn() {
+        val board = initializeBoard(1000, 1000)
+                .withMove(999, testPlayer1)
+                .withMove(999, testPlayer1)
+                .withMove(999, testPlayer1)
+                .withMove(999, testPlayer1)
 
         val state = board.getGameState(4) as Connect4Board.Won
         assertTrue(state.winner == testPlayer1)
