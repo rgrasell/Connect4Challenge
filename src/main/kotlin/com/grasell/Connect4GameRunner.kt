@@ -33,7 +33,11 @@ fun simulateGame(player1: Player, player2: Player, width: Int = 7, height: Int =
             return waitingPlayer
         }
 
-        // Check for endgame conditions
-        //TODO: check for a winner or tie
+        // Check endgame conditions
+        val resolution = board.getGameState(winningSequenceLength)
+        when (resolution) {
+            is Connect4Board.Won -> return resolution.winner
+            is Connect4Board.Tie -> return null
+        }
     }
 }

@@ -15,6 +15,6 @@ fun main(args: Array<String>) {
 
     val winner = simulateGame(player1, player2)
 
-    println(winner)
+    println("Winner: ${winner?.name}")
 
 }
