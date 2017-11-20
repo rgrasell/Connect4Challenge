@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.*
  * This represents the state of a Connect 4 "board".
  * It is immutable, but will return a new game board with 1 move applied.  Call withMove().
  */
-class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<ImmutableList<Piece?>>, val players: ImmutableList<Player>, val turnsTaken: Int) {
+class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<ImmutableList<Piece?>>, val players: ImmutableSet<Player>, val turnsTaken: Int) {
     /**
      * Returns an independent copy of the this board, but with 1 move applide to it.
      * Throws IllegalMoveException if a column is full or if a nonexistant column is selected.
@@ -47,31 +47,16 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
                     .filter { it }
                     .any()
 
-            // Class to conveniently store the column and row of a piece
-            data class Cell(val piece: Piece?, val column: Int, val row: Int)
-
-            val winsByUpwardDiagonal = this.columns.asSequence().zip((0 until columns.size).asSequence())
-                    .flatMap { (column, columnIndex) ->
-                        column.asSequence()
-                                .zip((0 until column.size).asSequence())
-                                .map { (piece, rowIndex) ->
-                                    Cell(piece, columnIndex, rowIndex)
-                                }
-                    }
+            val winsByUpwardDiagonal = boardSequence(columns)
                     .groupBy { it.column - it.row }.asSequence()
                     .map { hasXInARow(it.value.asSequence().map { it.piece }, currentPlayer, winningSequenceLength) }
+                    .filter { it }
                     .any()
 
-            val winsByDownwardDiagonal = this.columns.asSequence().zip((0 until columns.size).asSequence())
-                    .flatMap { (column, columnIndex) ->
-                        column.asSequence()
-                                .zip((0 until column.size).asSequence())
-                                .map { (piece, rowIndex) ->
-                                    Cell(piece, columnIndex, rowIndex)
-                                }
-                    }
+            val winsByDownwardDiagonal = boardSequence(columns)
                     .groupBy { it.column + it.row }.asSequence()
                     .map { hasXInARow(it.value.asSequence().map { it.piece }, currentPlayer, winningSequenceLength) }
+                    .filter { it }
                     .any()
 
             if (winsByRows || winsByColumns || winsByUpwardDiagonal || winsByDownwardDiagonal) return Won(currentPlayer)
@@ -100,6 +85,37 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
         return false
     }
 
+    // Class to conveniently store the column and row of a piece
+    data class Cell(val piece: Piece?, val column: Int, val row: Int)
+
+    /**
+     * Creates a sequence of the board, with each element being a Cell object described above.
+     */
+    fun boardSequence(columns: ImmutableList<ImmutableList<Piece?>>): Sequence<Cell> {
+        return object : Sequence<Cell> {
+            override fun iterator(): Iterator<Cell> {
+                return object : Iterator<Cell> {
+                    private var columnIndex = 0
+                    private var rowIndex = 0
+
+                    override fun hasNext(): Boolean = (columnIndex < columns.size)
+
+                    override fun next(): Cell {
+                        val cell = Cell(columns[columnIndex][rowIndex], columnIndex, rowIndex)
+                        rowIndex++
+                        if (rowIndex >= columns[columnIndex].size) {
+                            columnIndex++
+                            rowIndex = 0
+                        }
+                        return cell
+                    }
+
+                }
+            }
+
+        }
+    }
+
     open class GameState
     class InProgress : GameState()
     class Won(val winner: Player) : GameState()
@@ -115,7 +131,7 @@ fun initiateBoard(width: Int, height: Int): Connect4Board {
             .map { (0 until height).asSequence().map { null as Piece? }.toImmutableList() }
             .toImmutableList()
 
-    return Connect4Board(width, height, backingLists, immutableListOf(), 0)
+    return Connect4Board(width, height, backingLists, immutableSetOf(), 0)
 }
 
 data class Piece(val owner: Player)
