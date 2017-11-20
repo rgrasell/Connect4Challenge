@@ -69,7 +69,8 @@ class Connect4BoardTest {
         assertTrue(state.winner == testPlayer1)
     }
 
-    //TODO: Why is this test so slow? About 50x slower than the other tests
+    // TODO: Why is this test so slow? About 50x slower than the other tests
+    // Working theory: JVM warmup.  A copy of this testcase runs in the usual 1-2ms.
     @Test()
     fun getGameState_SimpleRow() {
         val board = initiateBoard(10, 10)

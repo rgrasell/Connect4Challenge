@@ -4,7 +4,7 @@ import kotlinx.collections.immutable.*
 
 /**
  * This represents the state of a Connect 4 "board".
- * It is immutable, but will return a new game board with 1 move applied.  Call withMove().
+ * It is immutable, and will return a new game board with 1 move applied.  Call withMove().
  */
 class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<ImmutableList<Piece?>>, val players: ImmutableSet<Player>, val turnsTaken: Int) {
     /**
@@ -71,12 +71,15 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
         return InProgress()
     }
 
-    private fun hasXInARow(input: Sequence<Piece?>, forPlayer: Player, winningLength: Int): Boolean {
+    /**
+     * Looks at a sequence of pieces and determines if winningLength of them in a row belong to player
+     */
+    private fun hasXInARow(input: Sequence<Piece?>, player: Player, winningLength: Int): Boolean {
         var inARow = 0
 
         input.forEach {
             when (it?.owner) {
-                forPlayer -> inARow++
+                player -> inARow++
                 else -> inARow = 0
             }
             if (inARow == winningLength) return true
@@ -86,34 +89,29 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
     }
 
     // Class to conveniently store the column and row of a piece
-    data class Cell(val piece: Piece?, val column: Int, val row: Int)
+    private data class Cell(val piece: Piece?, val column: Int, val row: Int)
 
     /**
      * Creates a sequence of the board, with each element being a Cell object described above.
      */
-    fun boardSequence(columns: ImmutableList<ImmutableList<Piece?>>): Sequence<Cell> {
-        return object : Sequence<Cell> {
-            override fun iterator(): Iterator<Cell> {
-                return object : Iterator<Cell> {
-                    private var columnIndex = 0
-                    private var rowIndex = 0
+    private fun boardSequence(columns: ImmutableList<ImmutableList<Piece?>>): Sequence<Cell> {
+        return object : Iterator<Cell> {
+            private var columnIndex = 0
+            private var rowIndex = 0
 
-                    override fun hasNext(): Boolean = (columnIndex < columns.size)
+            override fun hasNext(): Boolean = (columnIndex < columns.size)
 
-                    override fun next(): Cell {
-                        val cell = Cell(columns[columnIndex][rowIndex], columnIndex, rowIndex)
-                        rowIndex++
-                        if (rowIndex >= columns[columnIndex].size) {
-                            columnIndex++
-                            rowIndex = 0
-                        }
-                        return cell
-                    }
-
+            override fun next(): Cell {
+                val cell = Cell(columns[columnIndex][rowIndex], columnIndex, rowIndex)
+                rowIndex++
+                if (rowIndex >= columns[columnIndex].size) {
+                    columnIndex++
+                    rowIndex = 0
                 }
+                return cell
             }
 
-        }
+        }.asSequence()
     }
 
     open class GameState
