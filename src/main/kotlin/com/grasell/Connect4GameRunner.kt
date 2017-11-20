@@ -5,7 +5,7 @@ package com.grasell
  * or the board fills up and draws.
  * Returns the player who won, or null for a draw.
  */
-fun simulateGame(player1: Player, player2: Player, width: Int = 4, height: Int = 4): Player? {
+fun simulateGame(player1: Player, player2: Player, width: Int = 7, height: Int = 6, winningSequenceLength: Int = 4): Player? {
     var board = initiateBoard(width, height)
     var player1Turn = true
 
