@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
         override fun takeTurn(board: Connect4Board, turnCallback: (Int) -> Unit) = turnCallback(2)
     }
 
-    val winner = Connect4GameRunner(player1, player2).run()
+    val winner = simulateGame(player1, player2)
 
     println(winner)
 
