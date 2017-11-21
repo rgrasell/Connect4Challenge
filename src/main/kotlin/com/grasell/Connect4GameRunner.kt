@@ -18,7 +18,7 @@ fun simulateGame(player1: Player, player2: Player, width: Int = 7, height: Int =
         // If they throw an exception, they forfeit.
         try {
             var playersChosenColumn: Int? = null
-            currentPlayer.takeTurn(board) {
+            currentPlayer.takeTurn(board, waitingPlayer) {
                playersChosenColumn = it
             }
 
