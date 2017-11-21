@@ -47,13 +47,13 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
                     .filter { it }
                     .any()
 
-            val winsByUpwardDiagonal = boardSequence(columns)
+            val winsByUpwardDiagonal = cellSequence()
                     .groupBy { it.column - it.row }.asSequence()
                     .map { hasXInARow(it.value.asSequence().map { it.piece }, currentPlayer, winningSequenceLength) }
                     .filter { it }
                     .any()
 
-            val winsByDownwardDiagonal = boardSequence(columns)
+            val winsByDownwardDiagonal = cellSequence()
                     .groupBy { it.column + it.row }.asSequence()
                     .map { hasXInARow(it.value.asSequence().map { it.piece }, currentPlayer, winningSequenceLength) }
                     .filter { it }
@@ -89,12 +89,12 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
     }
 
     // Class to conveniently store the column and row of a piece
-    private data class Cell(val piece: Piece?, val column: Int, val row: Int)
+    data class Cell(val piece: Piece?, val column: Int, val row: Int)
 
     /**
      * Creates a sequence of the board, with each element being a Cell object described above.
      */
-    private fun boardSequence(columns: ImmutableList<ImmutableList<Piece?>>): Sequence<Cell> {
+    fun cellSequence(): Sequence<Cell> {
         return object : Iterator<Cell> {
             private var columnIndex = 0
             private var rowIndex = 0
