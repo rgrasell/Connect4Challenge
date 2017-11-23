@@ -1,6 +1,7 @@
 package com.grasell.Bots.Ryan
 
 import com.grasell.Connect4Board
+import com.grasell.Piece
 import com.grasell.Player
 
 class RyanBot : Player {
@@ -16,9 +17,7 @@ class RyanBot : Player {
 
         // TODO: A real static analysis algorithm
         val staticAnalysis = { gameState: Connect4Board ->
-            (0 until winningSequenceLength).asSequence()
-                    .map { it to gameState.getGameState(it) }
-                    .sumBy { it.first }
+            countExposedPieces(gameState)
         }
 
         val checkGameResolution = { gameState: Connect4Board ->
@@ -39,4 +38,26 @@ class RyanBot : Player {
     }
 
     override val name = "Ryan's bot"
+
+    private fun countExposedPieces(board: Connect4Board): Int {
+        return board.cellSequence()
+                .filter { it.piece?.owner == this }
+                .map { neighbors(it, board) }
+                .filter {
+                    it.filter { it != null }.count() > 0
+                }
+                .count()
+
+    }
+
+    private fun neighbors(cell: Connect4Board.Cell, board: Connect4Board): Sequence<Piece?> {
+        // pairs of X to Y
+        return sequenceOf(0 to 1, 1 to 1, 1 to 0 )
+                .flatMap { sequenceOf(it, -it.first to -it.second) }
+                .map { cell.column + it.first to cell.row + it.second }
+                .filter { it.first > 0 && it.first < board.width }
+                .filter { it.second > 0 && it.second < board.height }
+                .map { board[it.first][it.second] }
+    }
+
 }
