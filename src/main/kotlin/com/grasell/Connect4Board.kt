@@ -114,11 +114,17 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
         }.asSequence()
     }
 
+     fun humanRepresentation(forPlayer: Player): String {
+        return cellSequence().groupBy { it.row }.asSequence()
+                .sortedByDescending { it.key }
+                .map { it.value.joinToString(prefix = "| ", postfix = " |", separator = " | ") { if (it.piece?.owner == forPlayer) "x" else if (it.piece?.owner == null) "_" else "o" } }
+                .joinToString(separator = "\n") { it }
+    }
+
     open class GameState
     class InProgress : GameState()
     class Won(val winner: Player) : GameState()
     class Tie : GameState()
-
 }
 
 /**
