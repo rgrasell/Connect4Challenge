@@ -29,7 +29,7 @@ class RyanBot : Player {
             }
         }
 
-        val bestMove = calculateBestMove(board, boardToGameStates, staticAnalysis, checkGameResolution, 4)!!
+        val bestMove = calculateBestMove(board, boardToGameStates, staticAnalysis, checkGameResolution, 6)!!
 
         turnCallback(bestMove)
     }
