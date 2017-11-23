@@ -8,7 +8,7 @@ fun <GameState, Move> calculateBestMove(
         maxDepth: Int): Move? {
 
     return enumerateOptions(gameState, true)
-            .maxBy { calculateUtilityRecursive(it.second, enumerateOptions, staticAnalysis, checkGameResolution, true, 0, maxDepth) }?.first
+            .maxBy { calculateUtilityRecursive(it.second, enumerateOptions, staticAnalysis, checkGameResolution, true, 0, maxDepth, Int.MIN_VALUE, Int.MAX_VALUE) }?.first
 }
 
 
@@ -17,9 +17,11 @@ private fun <GameState, Move> calculateUtilityRecursive(
         enumerateOptions: (GameState, Boolean) -> Sequence<Pair<Move, GameState>>,
         staticAnalysis: (GameState) -> Int,
         checkGameResolution: (GameState) -> GameResolution?,
-        ourTurn: Boolean,
+        maximizingPlayer: Boolean,
         depth: Int,
-        maxDepth: Int): Int {
+        maxDepth: Int,
+        alpha: Int,
+        beta: Int): Int {
 
     checkGameResolution(gameState)?.let {
         return when (it) {
@@ -31,11 +33,27 @@ private fun <GameState, Move> calculateUtilityRecursive(
 
     if (depth == maxDepth) return staticAnalysis(gameState)
 
-    val subtrees = enumerateOptions(gameState, ourTurn)
-            .map { it.second }
-            .map { calculateUtilityRecursive(it, enumerateOptions, staticAnalysis, checkGameResolution, !ourTurn, depth + 1, maxDepth) }
+    var mutableAlpha = alpha
+    var mutableBeta = beta
+    var v = 0
 
-    return (if (ourTurn) subtrees.max() else subtrees.min()) ?: staticAnalysis(gameState)
+    if (maximizingPlayer) {
+        v = Int.MIN_VALUE
+        for (move in enumerateOptions(gameState, true)) {
+            v = Math.max(v, calculateUtilityRecursive(move.second, enumerateOptions, staticAnalysis, checkGameResolution, false, depth + 1, maxDepth, mutableAlpha, mutableBeta))
+            mutableAlpha = Math.max(mutableAlpha, v)
+            if (mutableBeta <= mutableAlpha) break
+        }
+    } else {
+        v = Int.MAX_VALUE
+        for (move in enumerateOptions(gameState, false)) {
+            v = Math.min(v, calculateUtilityRecursive(move.second, enumerateOptions, staticAnalysis, checkGameResolution, true, depth + 1, maxDepth, mutableAlpha, mutableBeta))
+            mutableBeta = Math.min(mutableBeta, v)
+            if (mutableBeta <= mutableAlpha) break
+        }
+    }
+
+    return v
 
 }
 
