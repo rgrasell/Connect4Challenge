@@ -22,7 +22,7 @@ class RyanBot : Player {
         }
 
         val checkGameResolution = { gameState: Connect4Board ->
-            when (board.getGameState(winningSequenceLength)) {
+            when (gameState.getGameState(winningSequenceLength)) {
                 is Connect4Board.Won -> GameResolution.WIN
                 is Connect4Board.Tie -> GameResolution.TIE
                 else -> null

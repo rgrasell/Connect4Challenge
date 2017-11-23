@@ -17,6 +17,4 @@ fun main(args: Array<String>) {
     }
 
     println("Completed in $time")
-
-
 }
