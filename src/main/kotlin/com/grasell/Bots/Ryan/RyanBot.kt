@@ -29,9 +29,13 @@ class RyanBot : Player {
             }
         }
 
-        val bestMove = calculateBestMove(board, boardToGameStates, staticAnalysis, checkGameResolution, 6)!!
+        (0 .. Int.MAX_VALUE).forEach {
+            val bestMove = calculateBestMove(board, boardToGameStates, staticAnalysis, checkGameResolution, it)!!
+            turnCallback(bestMove)
+            println("$name got to depth $it")
+        }
 
-        turnCallback(bestMove)
+
     }
 
     override val name = "Ryan's bot"

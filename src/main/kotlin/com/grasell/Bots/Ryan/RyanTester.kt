@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     val player2 = RyanBot()
 
     val time = measureTimeMillis {
-        val winner = simulateGame(player1, player2)
+        val winner = simulateGame(player1, player2, 10_000)
         println("Winner: ${winner?.name}")
     }
 
