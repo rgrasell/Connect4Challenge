@@ -26,9 +26,14 @@ fun simulateGame(player1: Player, player2: Player, turnLength: Long, width: Int 
         playingThread.join(turnLength)
         playingThread.stop() // Forcibly kill the thread
 
-        if (playersChosenColumn != null) {
-            board = board.withMove(playersChosenColumn!!, currentPlayer)
-        } else {
+        try {
+            if (playersChosenColumn != null) {
+                board = board.withMove(playersChosenColumn!!, currentPlayer)
+            } else {
+                return waitingPlayer
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
             return waitingPlayer
         }
 
