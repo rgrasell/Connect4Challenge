@@ -1,7 +1,5 @@
 package com.grasell.Bots.Ryan
 
-import com.grasell.Bots.Ryan.RyanBot
-import com.grasell.Player
 import com.grasell.initializeBoard
 import com.grasell.simulateGame
 import kotlin.system.measureTimeMillis
