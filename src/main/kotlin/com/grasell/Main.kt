@@ -10,10 +10,13 @@ fun main(args: Array<String>) {
     }
     val player2 = object : Player {
         override val name = "player2"
-        override fun takeTurn(board: Connect4Board, opponent: Player, turnCallback: (Int) -> Unit) = turnCallback(2)
+        override fun takeTurn(board: Connect4Board, opponent: Player, turnCallback: (Int) -> Unit) {
+            Thread.sleep(100_000)
+            turnCallback(2)
+        }
     }
 
-    val winner = simulateGame(player1, player2)
+    val winner = simulateGame(player1, player2, 10_000)
 
     println("Winner: ${winner?.name}")
 
