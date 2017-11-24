@@ -37,7 +37,7 @@ fun simulateGame(player1: Player, player2: Player, turnLength: Long, width: Int 
             return waitingPlayer
         }
 
-        println("${currentPlayer.name} took their turn and produced:")
+        println("${currentPlayer.name} took their turn and produced: (${board.hashCode()})")
         println(board.humanRepresentation(player1))
 
         // Check endgame conditions
