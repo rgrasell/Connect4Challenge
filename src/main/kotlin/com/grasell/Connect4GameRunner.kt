@@ -17,7 +17,7 @@ fun simulateGame(player1: Player, player2: Player, turnLength: Long, width: Int 
         // Execute the player's turn in a new thread
         var playersChosenColumn: Int? = null
         val playingThread = Thread({
-                    currentPlayer.takeTurn(board, waitingPlayer) {
+                    currentPlayer.takeTurn(board, waitingPlayer, winningSequenceLength) {
                         playersChosenColumn = it
                     }
                 })

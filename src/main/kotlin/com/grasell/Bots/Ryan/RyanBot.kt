@@ -5,10 +5,7 @@ import com.grasell.Piece
 import com.grasell.Player
 
 class RyanBot : Player {
-    override fun takeTurn(board: Connect4Board, opponent: Player, turnCallback: (Int) -> Unit) {
-        // TODO: pass in a real winningSequenceLength value
-        val winningSequenceLength = 4
-
+    override fun takeTurn(board: Connect4Board, opponent: Player, winningSequenceLength: Int, turnCallback: (Int) -> Unit) {
         val boardToGameStates = { gameState: Connect4Board, ourTurn: Boolean ->
             (0 until gameState.width).asSequence()
                     .filter { gameState[it].last() == null }

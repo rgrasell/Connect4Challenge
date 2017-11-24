@@ -7,12 +7,12 @@ import org.junit.Assert.*
 class Connect4BoardTest {
 
     private val testPlayer1 = object : Player {
-        override fun takeTurn(board: Connect4Board, opponent: Player, turnCallback: (Int) -> Unit) = TODO("not neccessary for these tests") //To change body of created functions use File | Settings | File Templates.
+        override fun takeTurn(board: Connect4Board, opponent: Player, winningSequenceLength: Int, turnCallback: (Int) -> Unit) = TODO("not neccessary for these tests") //To change body of created functions use File | Settings | File Templates.
         override val name = "testPlayer1"
     }
 
     private val testPlayer2 = object : Player {
-        override fun takeTurn(board: Connect4Board, opponent: Player, turnCallback: (Int) -> Unit) = TODO("not neccessary for these tests") //To change body of created functions use File | Settings | File Templates.
+        override fun takeTurn(board: Connect4Board, opponent: Player, winningSequenceLength: Int, turnCallback: (Int) -> Unit) = TODO("not neccessary for these tests") //To change body of created functions use File | Settings | File Templates.
         override val name = "testPlayer1"
     }
 

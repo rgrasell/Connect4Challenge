@@ -5,7 +5,7 @@ import com.grasell.Player
 import java.util.*
 
 class HumanPlayer : Player {
-    override fun takeTurn(board: Connect4Board, opponent: Player, turnCallback: (Int) -> Unit) {
+    override fun takeTurn(board: Connect4Board, opponent: Player, winningSequenceLength: Int, turnCallback: (Int) -> Unit) {
         println("Current board: ")
         println(board.humanRepresentation(this))
         print("Enter column number to drop piece: ")

@@ -4,7 +4,7 @@ import com.grasell.Connect4Board
 import com.grasell.Player
 
 class ExampleBot : Player {
-    override fun takeTurn(board: Connect4Board, opponent: Player, turnCallback: (Int) -> Unit) {
+    override fun takeTurn(board: Connect4Board, opponent: Player, winningSequenceLength: Int, turnCallback: (Int) -> Unit) {
         // Feel free to use the withMoves method on the board to simulate the outcome of moves
         // Note that this has no effect on the game at large. Until turnCallback() is called, the official game board is unaltered.
         val newBoard = board.withMove(3, this) // Simulates the outcome of placing a piece at column index 3
