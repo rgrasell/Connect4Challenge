@@ -17,12 +17,18 @@ class RyanBot : Player {
 
         // TODO: A real static analysis algorithm
         val staticAnalysis = { gameState: Connect4Board ->
-            countExposedPieces(gameState)
+            val ourPieces = countExposedPieces(gameState, this)
+            val theirPieces = countExposedPieces(gameState, opponent)
+            ourPieces * ourPieces - theirPieces * theirPieces
         }
 
         val checkGameResolution = { gameState: Connect4Board ->
-            when (gameState.getGameState(winningSequenceLength)) {
-                is Connect4Board.Won -> GameResolution.WIN
+            val resolution = gameState.getGameState(winningSequenceLength)
+            when (resolution) {
+                is Connect4Board.Won -> {
+                    if (resolution.winner == this) GameResolution.WIN
+                    else GameResolution.LOSS
+                }
                 is Connect4Board.Tie -> GameResolution.TIE
                 else -> null
             }
@@ -31,7 +37,6 @@ class RyanBot : Player {
         (0 .. Int.MAX_VALUE).forEach {
             val bestMove = calculateBestMove(board, boardToGameStates, staticAnalysis, checkGameResolution, it)!!
             turnCallback(bestMove)
-            println("$name got to depth $it")
         }
 
 
@@ -39,9 +44,9 @@ class RyanBot : Player {
 
     override val name = "Ryan's bot"
 
-    private fun countExposedPieces(board: Connect4Board): Int {
+    private fun countExposedPieces(board: Connect4Board, player: Player): Int {
         return board.cellSequence()
-                .filter { it.piece?.owner == this }
+                .filter { it.piece?.owner == player }
                 .map { neighbors(it, board) }
                 .filter {
                     it.filter { it != null }.count() > 0

@@ -39,15 +39,15 @@ private fun <GameState, Move> calculateUtilityRecursive(
 
     if (maximizingPlayer) {
         v = Int.MIN_VALUE
-        for (move in enumerateOptions(gameState, true)) {
-            v = Math.max(v, calculateUtilityRecursive(move.second, enumerateOptions, staticAnalysis, checkGameResolution, false, depth + 1, maxDepth, mutableAlpha, mutableBeta))
+        for (move in enumerateOptions(gameState, maximizingPlayer)) {
+            v = Math.max(v, calculateUtilityRecursive(move.second, enumerateOptions, staticAnalysis, checkGameResolution, !maximizingPlayer, depth + 1, maxDepth, mutableAlpha, mutableBeta))
             mutableAlpha = Math.max(mutableAlpha, v)
             if (mutableBeta <= mutableAlpha) break
         }
     } else {
         v = Int.MAX_VALUE
         for (move in enumerateOptions(gameState, false)) {
-            v = Math.min(v, calculateUtilityRecursive(move.second, enumerateOptions, staticAnalysis, checkGameResolution, true, depth + 1, maxDepth, mutableAlpha, mutableBeta))
+            v = Math.min(v, calculateUtilityRecursive(move.second, enumerateOptions, staticAnalysis, checkGameResolution, !maximizingPlayer, depth + 1, maxDepth, mutableAlpha, mutableBeta))
             mutableBeta = Math.min(mutableBeta, v)
             if (mutableBeta <= mutableAlpha) break
         }
