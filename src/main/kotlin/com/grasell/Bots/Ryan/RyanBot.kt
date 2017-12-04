@@ -4,7 +4,7 @@ import com.grasell.Connect4Board
 import com.grasell.Piece
 import com.grasell.Player
 
-class RyanBot : Player {
+class RyanBot(override val name: String = "Ryan's bot") : Player {
     override fun takeTurn(board: Connect4Board, opponent: Player, winningSequenceLength: Int, turnCallback: (Int) -> Unit) {
         val boardToGameStates = { gameState: Connect4Board, ourTurn: Boolean ->
             (0 until gameState.width).asSequence()
@@ -34,12 +34,11 @@ class RyanBot : Player {
         (0 .. Int.MAX_VALUE).forEach {
             val bestMove = calculateBestMove(board, boardToGameStates, staticAnalysis, checkGameResolution, it)!!
             turnCallback(bestMove)
+            if (bestMove == Int.MAX_VALUE) return
         }
 
 
     }
-
-    override val name = "Ryan's bot"
 
     private fun countExposedPieces(board: Connect4Board, player: Player): Int {
         return board.cellSequence()

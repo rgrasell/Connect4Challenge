@@ -8,7 +8,8 @@ fun <GameState, Move> calculateBestMove(
         maxDepth: Int): Move? {
 
     return enumerateOptions(gameState, true)
-            .maxBy { calculateUtilityRecursive(it.second, enumerateOptions, staticAnalysis, checkGameResolution, true, 0, maxDepth, Int.MIN_VALUE, Int.MAX_VALUE) }?.first
+            .map { it.first to calculateUtilityRecursive(it.second, enumerateOptions, staticAnalysis, checkGameResolution, false, 0, maxDepth, Int.MIN_VALUE, Int.MAX_VALUE) }
+            .maxBy { it.second }?.first
 }
 
 
@@ -46,7 +47,7 @@ private fun <GameState, Move> calculateUtilityRecursive(
         }
     } else {
         v = Int.MAX_VALUE
-        for (move in enumerateOptions(gameState, false)) {
+        for (move in enumerateOptions(gameState, maximizingPlayer)) {
             v = Math.min(v, calculateUtilityRecursive(move.second, enumerateOptions, staticAnalysis, checkGameResolution, !maximizingPlayer, depth + 1, maxDepth, mutableAlpha, mutableBeta))
             mutableBeta = Math.min(mutableBeta, v)
             if (mutableBeta <= mutableAlpha) break
