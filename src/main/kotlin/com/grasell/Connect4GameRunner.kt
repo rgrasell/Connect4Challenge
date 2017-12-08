@@ -6,7 +6,7 @@ package com.grasell
  * Returns the player who won, or null for a draw.
  */
 fun simulateGame(player1: Player, player2: Player, turnLength: Long, width: Int = 7, height: Int = 6, winningSequenceLength: Int = 4): Player? {
-    var board = initializeBoard(width, height)
+    var board = initializeBoard(width, height, winningSequenceLength)
     var player1Turn = true
 
     // Give each player a turn until the game ends by a win or draw
@@ -41,7 +41,7 @@ fun simulateGame(player1: Player, player2: Player, turnLength: Long, width: Int 
         println(board.humanRepresentation(player1))
 
         // Check endgame conditions
-        val resolution = board.getGameState(winningSequenceLength)
+        val resolution = board.gameState
         when (resolution) {
             is Connect4Board.Won -> return resolution.winner
             is Connect4Board.Tie -> return null

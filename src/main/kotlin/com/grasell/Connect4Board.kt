@@ -6,10 +6,11 @@ import kotlinx.collections.immutable.*
  * This represents the state of a Connect 4 "board".
  * It is immutable, and will return a new game board with 1 move applied.  Call withMove().
  */
-class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<ImmutableList<Piece?>>, val players: ImmutableSet<Player>, val turnsTaken: Int) {
+class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<ImmutableList<Piece?>>, val players: ImmutableSet<Player>, val turnsTaken: Int, val winningSequenceLength: Int, val gameState: GameState) {
+
     /**
-     * Returns an independent copy of the this board, but with 1 move applide to it.
-     * Throws IllegalMoveException if a column is full or if a nonexistant column is selected.
+     * Returns an independent copy of the this board, but with 1 move applied to it.
+     * Throws IllegalMoveException if a column is full or if a nonexistent column is selected.
      */
     fun withMove(x: Int, player: Player): Connect4Board {
         if (x >= width) throw IllegalMoveException("Column $x doesn't exist.")
@@ -24,7 +25,14 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
                     }
                 }.toImmutableList()
 
-        return Connect4Board(width, height, newColumns, players + player, turnsTaken + 1)
+        val newGameState = when (gameState) {
+            is Won -> gameState
+            is Tie -> gameState
+            is InProgress -> calculateGameStateOptimized(newColumns, x, turnsTaken + 1, winningSequenceLength)
+            else -> throw IllegalMoveException("GameState got into weird state: $gameState") // This is a strange condition that should never happen
+        }
+
+        return Connect4Board(width, height, newColumns, players + player, turnsTaken + 1, winningSequenceLength, newGameState)
     }
 
     /**
@@ -32,43 +40,48 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
      */
     operator fun get(x: Int) = columns[x]
 
-    fun getGameState(winningSequenceLength: Int): GameState {
+    /**
+     * Search only the latest placed piece for a winner.
+     * Only works if called after every move, but is fast.
+     */
+    private fun calculateGameStateOptimized(columns: List<List<Piece?>>, x: Int, turnsTaken: Int, winningSequenceLength: Int): GameState {
+        // Find the last piece placed
+        val y = columns[x].indexOfLast { it != null }
+        val piece = columns[x][y]
+        val player = piece!!.owner
 
-        players.forEach { currentPlayer ->
-            val winsByColumns = this.columns.asSequence()
-                    .map { hasXInARow(it.asSequence(), currentPlayer, winningSequenceLength) }
-                    .filter { it }
-                    .any()
+        // TODO: more elegant combination of directions potentially like:
+        // sequenceOf(-1, 0, 1).zip(sequenceOf(-1, 0))
 
-            val winsByRows = this.columns.asSequence()
-                    .flatMap { it.asSequence().zip((0 until it.size).asSequence()) }
-                    .groupBy { it.second }.asSequence()
-                    .map { hasXInARow(it.value.asSequence().map { it.first }, currentPlayer, winningSequenceLength) }
-                    .filter { it }
-                    .any()
+        val hasUpLeftSequence = searchforSequence(x, y, -1, 1, columns, winningSequenceLength, player)
+        val hasUpRightSequence = searchforSequence(x, y, 1, 1, columns, winningSequenceLength, player)
+        val hasDownLeftSequence = searchforSequence(x, y, -1, -1, columns, winningSequenceLength, player)
+        val hasDownRightSequence = searchforSequence(x, y, 1, -1, columns, winningSequenceLength, player)
+        val hasLeftSequence = searchforSequence(x, y, -1, 0, columns, winningSequenceLength, player)
+        val hasRightSequence = searchforSequence(x, y, 1, 0, columns, winningSequenceLength, player)
+        val hasDownSequence = searchforSequence(x, y, 0, -1, columns, winningSequenceLength, player)
 
-            val winsByUpwardDiagonal = cellSequence()
-                    .groupBy { it.column - it.row }.asSequence()
-                    .map { hasXInARow(it.value.asSequence().map { it.piece }, currentPlayer, winningSequenceLength) }
-                    .filter { it }
-                    .any()
+        val hasSequence = hasUpLeftSequence || hasUpRightSequence || hasDownLeftSequence || hasDownRightSequence || hasLeftSequence || hasRightSequence || hasDownSequence
 
-            val winsByDownwardDiagonal = cellSequence()
-                    .groupBy { it.column + it.row }.asSequence()
-                    .map { hasXInARow(it.value.asSequence().map { it.piece }, currentPlayer, winningSequenceLength) }
-                    .filter { it }
-                    .any()
-
-            if (winsByRows || winsByColumns || winsByUpwardDiagonal || winsByDownwardDiagonal) return Won(currentPlayer)
+        if (hasSequence) {
+            return Won(player)
         }
 
-        // check for a tie
-        if (turnsTaken == width * height) {
+        if (turnsTaken == columns.size * columns[0].size) {
             return Tie()
         }
 
-        // No winner on this board
         return InProgress()
+    }
+
+    tailrec private fun searchforSequence(x: Int, y: Int, xDirection: Int, yDirection: Int, columns: List<List<Piece?>>, winningSequenceLength: Int, player: Player): Boolean {
+        if (winningSequenceLength == 0) return true
+
+        if (x < 0 || x > columns.lastIndex) return false
+        if (y < 0 || y > columns[0].lastIndex) return false
+        if (columns[x][y]?.owner != player) return false
+
+        return searchforSequence(x + xDirection, y + yDirection, xDirection, yDirection, columns, winningSequenceLength - 1, player)
     }
 
     /**
@@ -130,12 +143,12 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
 /**
  * Creates an empty game board with the specified dimensions.
  */
-fun initializeBoard(width: Int, height: Int): Connect4Board {
+fun initializeBoard(width: Int, height: Int, winningSequenceLength: Int): Connect4Board {
     val backingLists = (0 until width).asSequence()
             .map { (0 until height).asSequence().map { null as Piece? }.toImmutableList() }
             .toImmutableList()
 
-    return Connect4Board(width, height, backingLists, immutableSetOf(), 0)
+    return Connect4Board(width, height, backingLists, immutableSetOf(), 0, winningSequenceLength, Connect4Board.InProgress())
 }
 
 data class Piece(val owner: Player)

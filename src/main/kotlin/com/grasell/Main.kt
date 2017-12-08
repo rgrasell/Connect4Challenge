@@ -5,7 +5,7 @@ import com.grasell.Bots.Human.HumanPlayer
 fun main(args: Array<String>) {
     println("Hello, World")
 
-    val board = initializeBoard(4, 4)
+    val board = initializeBoard(4, 4, 3)
     val player1 = HumanPlayer()
     val player2 = HumanPlayer()
 

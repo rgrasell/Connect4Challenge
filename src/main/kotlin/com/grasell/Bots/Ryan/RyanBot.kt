@@ -20,7 +20,7 @@ class RyanBot(override val name: String = "Ryan's bot") : Player {
         }
 
         val checkGameResolution = { gameState: Connect4Board ->
-            val resolution = gameState.getGameState(winningSequenceLength)
+            val resolution = gameState.gameState
             when (resolution) {
                 is Connect4Board.Won -> {
                     if (resolution.winner == this) GameResolution.WIN

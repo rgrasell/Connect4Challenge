@@ -18,7 +18,7 @@ class Connect4BoardTest {
 
     @Test
     fun initializeBoard() {
-        val board = initializeBoard(5, 10)
+        val board = initializeBoard(5, 10, 4)
 
         assertEquals(5, board.columns.size)
 
@@ -29,7 +29,7 @@ class Connect4BoardTest {
 
     @Test
     fun withMove() {
-        val board = initializeBoard(5, 5)
+        val board = initializeBoard(5, 5, 4)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
                 .withMove(1, testPlayer1)
@@ -41,14 +41,14 @@ class Connect4BoardTest {
 
     @Test(expected = IllegalMoveException::class)
     fun withMove_NoSuchColumn() {
-        val board = initializeBoard(5, 5)
+        val board = initializeBoard(5, 5, 4)
 
         board.withMove(5, testPlayer1)
     }
 
     @Test(expected = IllegalMoveException::class)
     fun withMove_FullColumn() {
-        initializeBoard(5, 5)
+        initializeBoard(5, 5, 4)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
@@ -59,25 +59,25 @@ class Connect4BoardTest {
 
     @Test()
     fun getGameState_SimpleColumn() {
-        val board = initializeBoard(10, 10)
+        val board = initializeBoard(10, 10, 4)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
                 .withMove(0, testPlayer1)
 
-        val state = board.getGameState(4) as Connect4Board.Won
+        val state = board.gameState as Connect4Board.Won
         assertTrue(state.winner == testPlayer1)
     }
 
     @Test()
     fun getGameState_BigColumn() {
-        val board = initializeBoard(1000, 1000)
+        val board = initializeBoard(1000, 1000, 4)
                 .withMove(999, testPlayer1)
                 .withMove(999, testPlayer1)
                 .withMove(999, testPlayer1)
                 .withMove(999, testPlayer1)
 
-        val state = board.getGameState(4) as Connect4Board.Won
+        val state = board.gameState as Connect4Board.Won
         assertTrue(state.winner == testPlayer1)
     }
 
@@ -85,19 +85,19 @@ class Connect4BoardTest {
     // Working theory: JVM warmup.  A copy of this testcase runs in the usual 1-2ms.
     @Test()
     fun getGameState_SimpleRow() {
-        val board = initializeBoard(10, 10)
+        val board = initializeBoard(10, 10, 4)
                 .withMove(0, testPlayer1)
                 .withMove(1, testPlayer1)
                 .withMove(2, testPlayer1)
                 .withMove(3, testPlayer1)
 
-        val state = board.getGameState(4) as Connect4Board.Won
+        val state = board.gameState as Connect4Board.Won
         assertTrue(state.winner == testPlayer1)
     }
 
     @Test()
     fun getGameState_SimpleUpwardDiagonal() {
-        val board = initializeBoard(10, 10)
+        val board = initializeBoard(10, 10, 4)
                 .withMove(0, testPlayer1)
                 .withMove(1, testPlayer2)
                 .withMove(1, testPlayer1)
@@ -109,7 +109,7 @@ class Connect4BoardTest {
                 .withMove(3, testPlayer1)
                 .withMove(3, testPlayer1)
 
-        val state = board.getGameState(4) as Connect4Board.Won
+        val state = board.gameState as Connect4Board.Won
         assertTrue(state.winner == testPlayer1)
     }
 
