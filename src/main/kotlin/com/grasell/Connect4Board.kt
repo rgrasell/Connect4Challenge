@@ -127,10 +127,10 @@ class Connect4Board(val width: Int, val height: Int, val columns: ImmutableList<
         }.asSequence()
     }
 
-     fun humanRepresentation(forPlayer: Player): String {
+     fun humanRepresentation(xPlayer: Player): String {
         return cellSequence().groupBy { it.row }.asSequence()
                 .sortedByDescending { it.key }
-                .map { it.value.joinToString(prefix = "| ", postfix = " |", separator = " | ") { if (it.piece?.owner == forPlayer) "x" else if (it.piece?.owner == null) "_" else "o" } }
+                .map { it.value.joinToString(prefix = "| ", postfix = " |", separator = " | ") { if (it.piece?.owner == xPlayer) "x" else if (it.piece?.owner == null) "_" else "o" } }
                 .joinToString(separator = "\n") { it }
     }
 
